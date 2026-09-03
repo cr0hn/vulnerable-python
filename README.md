@@ -8,7 +8,6 @@
 <p align="center">
   Inspired by <a href="https://github.com/digininja/DVWA">DVWA</a>
   · Author <a href="https://github.com/cr0hn">Daniel García (cr0hn)</a>
-  · <a href="AUTHORS.md">About the author</a>
   · <a href="LICENSE">MIT</a>
 </p>
 
@@ -127,15 +126,8 @@ docker-compose.yml
 
 ## Author
 
-**Daniel García (cr0hn)**: cybersecurity researcher, developer, and trainer.
-Former pentester (Telefónica R&D), API security lead at 42Crunch, author of 100+
-open source tools (several in Kali Linux / BlackArch), conference speaker,
-founder of Navaja Negra and the OWASP Madrid chapter. He builds hands-on
-secure-development workshops; ByteBazaar is the open lab for that work.
-
-More: [AUTHORS.md](AUTHORS.md) · [cr0hn.com](https://cr0hn.com) · [GitHub](https://github.com/cr0hn)
+Main author: [Daniel García (cr0hn)](https://github.com/cr0hn). More at [cr0hn.com](https://cr0hn.com).
 
 ## License
 
-MIT ([LICENSE](LICENSE)), including a short bio of the copyright holder.
-For learning and local research. Not a real store, even when it looks like one.
+MIT ([LICENSE](LICENSE)). For learning and local research. Not a real store, even when it looks like one.
