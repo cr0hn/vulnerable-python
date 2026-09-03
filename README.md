@@ -127,7 +127,7 @@ docker-compose.yml
 
 ## Author
 
-**Daniel García (cr0hn)** — cybersecurity researcher, developer, and trainer.
+**Daniel García (cr0hn)**: cybersecurity researcher, developer, and trainer.
 Former pentester (Telefónica R&D), API security lead at 42Crunch, author of 100+
 open source tools (several in Kali Linux / BlackArch), conference speaker,
 founder of Navaja Negra and the OWASP Madrid chapter. He builds hands-on
