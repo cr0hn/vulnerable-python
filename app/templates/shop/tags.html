@@ -1,0 +1,26 @@
+{% extends "layouts/base.html" %}
+{% block title %}Tags{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">Browse by tag</h1>
+<p class="text-white/50 mb-6">Mongo-backed tag filter. Try <code class="text-neon">duck</code> or open the NoSQL lab docs for operator payloads.</p>
+<form method="get" class="flex gap-2 max-w-lg mb-8">
+  <input name="tag" value="{{ tag }}" placeholder="tag…" class="flex-1 rounded-lg bg-white/5 border border-white/10 px-3 py-2" />
+  <button class="rounded-lg bg-violet px-4">Filter</button>
+</form>
+{% if query %}
+  <pre class="mb-6 text-xs text-white/40 overflow-auto">Mongo query: {{ query }}</pre>
+{% endif %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+  {% for p in products %}
+    {% include "components/product_card.html" %}
+  {% endfor %}
+</div>
+{% if extras %}
+  <div class="rounded-xl border border-magenta/40 bg-magenta/10 p-4">
+    <p class="font-display text-magenta mb-2">Mongo-only hits (no storefront product row)</p>
+    <ul class="list-disc pl-5 text-fog">
+      {% for s in extras %}<li><code>{{ s }}</code></li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+{% endblock %}

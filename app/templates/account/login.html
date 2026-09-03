@@ -1,0 +1,43 @@
+{% extends "layouts/base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto rounded-2xl border border-white/10 bg-white/5 p-8">
+  <h1 class="font-display text-3xl text-white mb-2">Sign in</h1>
+  <p class="text-white/55 text-sm mb-6">Welcome back. Your orders and reviews live here.</p>
+  <form method="post" class="space-y-4">
+    <label class="block text-sm">Username
+      <input name="username" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required autocomplete="username" />
+    </label>
+    <label class="block text-sm">Password
+      <input type="password" name="password" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required autocomplete="current-password" />
+    </label>
+    <button class="w-full rounded-xl bg-neon py-3 font-display text-ink">Sign in</button>
+  </form>
+
+  <div class="mt-8 rounded-xl border border-neon/30 bg-neon/5 p-4">
+    <p class="text-neon text-xs font-medium uppercase tracking-wide mb-3">Lab accounts</p>
+    <table class="w-full text-sm text-left">
+      <thead>
+        <tr class="text-white/50">
+          <th class="pb-2 font-medium">Username</th>
+          <th class="pb-2 font-medium">Password</th>
+        </tr>
+      </thead>
+      <tbody class="text-fog">
+        <tr class="border-t border-white/10">
+          <td class="py-2 font-mono text-neon">alice</td>
+          <td class="py-2 font-mono text-white">alice123</td>
+        </tr>
+        <tr class="border-t border-white/10">
+          <td class="py-2 font-mono text-neon">bob</td>
+          <td class="py-2 font-mono text-white">bob123</td>
+        </tr>
+        <tr class="border-t border-white/10">
+          <td class="py-2 font-mono text-neon">admin</td>
+          <td class="py-2 font-mono text-white">admin123</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

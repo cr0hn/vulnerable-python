@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% block title %}Orders{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-6">Your orders</h1>
+<div class="space-y-3">
+  {% for o in orders %}
+    <a href="{{ url_for('orders.order_detail', order_id=o.id) }}"
+       class="flex justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-3 hover:border-violet">
+      <span>#{{ o.id }} · {{ o.status }} · {{ o.shipping_name }}</span>
+      <span class="text-neon">${{ '%.2f'|format(o.total_cents / 100) }}</span>
+    </a>
+  {% else %}
+    <p class="text-white/50">No orders yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

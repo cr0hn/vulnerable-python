@@ -1,0 +1,53 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ product.name }}{% endblock %}
+{% block content %}
+<div class="grid gap-10 md:grid-cols-2">
+  <div class="rounded-3xl border border-white/10 bg-white overflow-hidden">
+    <img src="{{ url_for('static', filename='products/' + product.image) }}" alt="{{ product.name }}"
+         class="w-full aspect-square object-cover" />
+  </div>
+  <div>
+    <p class="text-violet text-sm uppercase tracking-wide mb-2">{{ product.category }}</p>
+    <h1 class="font-display text-4xl text-white mb-4">{{ product.name }}</h1>
+    <p class="text-white/75 leading-relaxed mb-6 whitespace-pre-line">{{ product.description }}</p>
+    <p class="text-3xl text-neon font-display mb-2">${{ '%.2f'|format(product.price_cents / 100) }}</p>
+    <p class="text-sm text-white/45 mb-6">In stock · Ships in 2–4 business days</p>
+    <form method="post" action="{{ url_for('shop.cart_add', product_id=product.id) }}">
+      <button class="rounded-xl bg-neon px-6 py-3 font-display text-ink">Add to cart</button>
+    </form>
+  </div>
+</div>
+
+<section class="mt-16">
+  <h2 class="font-display text-2xl text-white mb-4">Reviews</h2>
+  <div class="space-y-4 mb-8">
+    {% for r in reviews %}
+      <article class="rounded-xl border border-white/10 bg-white/5 p-4">
+        <p class="text-sm text-white/50 mb-2">{{ r.user.username }} · {{ r.rating }}/5</p>
+        {# VULN (A05 Stored XSS): |safe disables Jinja auto-escaping.
+           SAFE: {{ r.body }} with default escaping, or a strict HTML sanitizer. #}
+        <div class="prose prose-invert text-fog">{{ r.body | safe }}</div>
+      </article>
+    {% else %}
+      <p class="text-white/50">No reviews yet. Be the first.</p>
+    {% endfor %}
+  </div>
+
+  {% if current_user %}
+  <form method="post" action="{{ url_for('shop.add_review', slug=product.slug) }}" class="rounded-2xl border border-white/10 p-6 space-y-3 max-w-xl">
+    <h3 class="font-display text-lg text-white">Leave a review</h3>
+    <label class="block text-sm text-white/60">Rating
+      <select name="rating" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2">
+        {% for n in range(5,0,-1) %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+      </select>
+    </label>
+    <label class="block text-sm text-white/60">Review
+      <textarea name="body" rows="3" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" placeholder="HTML is accepted… for teaching reasons."></textarea>
+    </label>
+    <button class="rounded-lg bg-violet px-4 py-2 text-sm">Post review</button>
+  </form>
+  {% else %}
+  <p class="text-white/60"><a class="text-neon underline" href="{{ url_for('account.login') }}">Sign in</a> to review.</p>
+  {% endif %}
+</section>
+{% endblock %}

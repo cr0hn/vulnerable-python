@@ -1,0 +1,25 @@
+{% extends "layouts/base.html" %}
+{% block title %}Account{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">{{ current_user.display_name }}</h1>
+<p class="text-white/50 mb-6">@{{ current_user.username }} · role=<code class="text-neon">{{ current_user.role }}</code></p>
+
+<div class="grid gap-8 md:grid-cols-2">
+  <form method="post" action="{{ url_for('account.update_profile') }}" class="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-3">
+    <h2 class="font-display text-xl text-white">Profile</h2>
+    <label class="block text-sm">Display name
+      <input name="display_name" value="{{ current_user.display_name }}" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" />
+    </label>
+    <label class="block text-sm">Email
+      <input name="email" value="{{ current_user.email }}" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" />
+    </label>
+    <button class="rounded-lg bg-violet px-4 py-2 text-sm">Save</button>
+  </form>
+
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+    <h2 class="font-display text-xl text-white mb-3">Mobile API token</h2>
+    <p class="text-sm text-white/50 mb-3">Use as <code>Authorization: Bearer …</code> against <code>/api/v1/*</code>. Also copied into <code>localStorage.bytebazaar_token</code> on login.</p>
+    <pre class="text-xs text-neon overflow-auto whitespace-pre-wrap break-all">{{ api_token }}</pre>
+  </div>
+</div>
+{% endblock %}

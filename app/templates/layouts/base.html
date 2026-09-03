@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}ByteBazaar{% endblock %} · geek merch</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: "#0B1020",
+            fog: "#E8EEF7",
+            neon: "#39FF14",
+            magenta: "#FF2D95",
+            violet: "#7C5CFF",
+          },
+          fontFamily: {
+            display: ['"Space Grotesk"', "system-ui", "sans-serif"],
+            body: ['"IBM Plex Sans"', "system-ui", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: "IBM Plex Sans", system-ui, sans-serif; }
+    .font-display { font-family: "Space Grotesk", system-ui, sans-serif; }
+    .grid-bg {
+      background-color: #0B1020;
+      background-image:
+        linear-gradient(rgba(124,92,255,0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(124,92,255,0.12) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+  </style>
+</head>
+<body class="min-h-full grid-bg text-fog antialiased">
+  <header class="border-b border-white/10 bg-ink/80 backdrop-blur sticky top-0 z-40">
+    <div class="mx-auto max-w-6xl px-4 py-4 flex items-center gap-6">
+      <a href="{{ url_for('shop.home') }}" class="font-display text-2xl tracking-tight text-white">
+        Byte<span class="text-neon">Bazaar</span>
+      </a>
+      <form action="{{ url_for('shop.search') }}" method="get" class="hidden md:flex flex-1">
+        <input name="q" value="{{ request.args.get('q','') }}" placeholder="Search merch…"
+               class="w-full rounded-l-lg bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-violet" />
+        <button class="rounded-r-lg bg-violet px-4 text-sm font-medium text-white">Search</button>
+      </form>
+      <nav class="ml-auto flex items-center gap-4 text-sm">
+        <a class="hover:text-neon" href="{{ url_for('shop.tags') }}">Tags</a>
+        <a class="hover:text-neon" href="{{ url_for('shop.cart_view') }}">Cart ({{ cart_count }})</a>
+        {% if current_user %}
+          <a class="hover:text-neon" href="{{ url_for('orders.my_orders') }}">Orders</a>
+          <a class="hover:text-neon" href="{{ url_for('tools.preview') }}">Preview</a>
+          <a class="hover:text-neon" href="{{ url_for('account.me') }}">{{ current_user.username }}</a>
+          <form method="post" action="{{ url_for('account.logout') }}">
+            <button class="text-white/60 hover:text-white">Out</button>
+          </form>
+        {% else %}
+          <a class="hover:text-neon" href="{{ url_for('account.login') }}">Sign in</a>
+          <a class="rounded-lg bg-neon px-3 py-1.5 font-medium text-ink" href="{{ url_for('account.register') }}">Join</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mx-auto max-w-6xl px-4 pt-4 space-y-2">
+        {% for cat, msg in messages %}
+          <div class="rounded-lg px-4 py-2 text-sm {% if cat == 'err' %}bg-magenta/20 text-magenta{% else %}bg-neon/10 text-neon{% endif %}">{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <main class="mx-auto max-w-6xl px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="border-t border-white/10 mt-16">
+    <div class="mx-auto max-w-6xl px-4 py-10 grid gap-8 md:grid-cols-3 text-sm text-white/55">
+      <div>
+        <p class="font-display text-white text-lg mb-2">Byte<span class="text-neon">Bazaar</span></p>
+        <p class="leading-relaxed">Geek merch for builders. Tees, mugs, desk toys, and prints that look at home next to a mechanical keyboard.</p>
+      </div>
+      <div>
+        <p class="text-white mb-2 font-medium">Help</p>
+        <p>Shipping: 2–4 business days after fulfillment.</p>
+        <p class="mt-1">Returns: 30 days, unused, tags on.</p>
+        <p class="mt-1">Support: support@bytebazaar.example</p>
+      </div>
+      <div>
+        <p class="text-white mb-2 font-medium">Lab notice</p>
+        <p class="leading-relaxed">Intentionally vulnerable application (dvwa-python). Do not expose it to the internet. Inspired by <a class="text-violet underline" href="https://github.com/digininja/DVWA">DVWA</a> · <a class="text-violet underline" href="https://owasp.org/Top10/2025/">OWASP Top 10:2025</a></p>
+      </div>
+    </div>
+  </footer>
+
+  {# VULN (A05 XSS chain): mirror session token into localStorage for "API convenience".
+     SAFE: never put bearer tokens where document.cookie / localStorage JS can read them;
+     keep session in an httpOnly cookie. #}
+  {% if session.get('js_token') %}
+  <script>
+    localStorage.setItem('bytebazaar_token', {{ session.get('js_token') | tojson }});
+  </script>
+  {% endif %}
+</body>
+</html>

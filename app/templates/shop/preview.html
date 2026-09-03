@@ -1,0 +1,16 @@
+{% extends "layouts/base.html" %}
+{% block title %}Link preview{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">Link preview</h1>
+<p class="text-white/50 mb-6 max-w-2xl">Paste a URL and the server will fetch it for a rich preview. Handy for sharing product inspiration. Also handy for SSRF labs.</p>
+<form method="post" class="flex gap-2 max-w-2xl mb-8">
+  <input name="url" value="{{ url }}" placeholder="https://…" class="flex-1 rounded-lg bg-white/5 border border-white/10 px-3 py-2" />
+  <button class="rounded-lg bg-violet px-4">Fetch</button>
+</form>
+{% if result %}
+  <div class="rounded-2xl border border-white/10 bg-ink/80 p-4">
+    <p class="text-sm text-white/50 mb-2">HTTP {{ result.status }}</p>
+    <pre class="text-xs text-neon overflow-auto whitespace-pre-wrap">{{ result.body }}</pre>
+  </div>
+{% endif %}
+{% endblock %}

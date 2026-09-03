@@ -1,0 +1,22 @@
+{% extends "layouts/base.html" %}
+{% block title %}Join{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto rounded-2xl border border-white/10 bg-white/5 p-8">
+  <h1 class="font-display text-3xl text-white mb-6">Create account</h1>
+  <form method="post" class="space-y-4">
+    <label class="block text-sm">Email
+      <input type="email" name="email" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    <label class="block text-sm">Username
+      <input name="username" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    <label class="block text-sm">Display name
+      <input name="display_name" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" />
+    </label>
+    <label class="block text-sm">Password
+      <input type="password" name="password" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    <button class="w-full rounded-xl bg-neon py-3 font-display text-ink">Join ByteBazaar</button>
+  </form>
+</div>
+{% endblock %}

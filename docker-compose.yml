@@ -1,0 +1,70 @@
+# ByteBazaar / dvwa-python — local vulnerable geek shop
+# Usage: docker compose up --build
+# App: http://localhost:8888
+# (8888 on purpose: Caido and many tools already claim 8080)
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bytebazaar
+      POSTGRES_PASSWORD: bytebazaar
+      POSTGRES_DB: bytebazaar
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bytebazaar -d bytebazaar"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  mongo:
+    image: mongo:7
+    # --quiet kills the endless info/debug chatter in compose logs
+    command: ["--quiet", "--bind_ip_all"]
+    volumes:
+      - mongodata:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ ping: 1 })"]
+      interval: 3s
+      timeout: 5s
+      retries: 20
+
+  # Fake Azure Instance Metadata Service (IMDS). Real SSRF target on the Docker network.
+  imds:
+    build: ./mocks/imds
+    # Not published to the host on purpose: only the app container should reach it,
+    # the same way real IMDS is only reachable from the VM/container identity.
+
+  # Fake Key Vault. Accepts the IMDS token and returns a "secret".
+  keyvault:
+    build: ./mocks/keyvault
+
+  web:
+    build: ./app
+    ports:
+      # Override with APP_PORT=9999 if 8888 is taken.
+      - "${APP_PORT:-8888}:8080"
+    environment:
+      FLASK_ENV: development
+      SECRET_KEY: "dev-only-change-me-not-for-production"
+      DATABASE_URL: postgresql+psycopg://bytebazaar:bytebazaar@db:5432/bytebazaar
+      MONGO_URL: mongodb://mongo:27017/bytebazaar
+      IMDS_URL: http://imds:8090
+      KEYVAULT_URL: http://keyvault:8091
+      JWT_SECRET: "supersecret"
+      # VULN: debug left on in a "shipping" compose — see A02 lab
+      FLASK_DEBUG: "1"
+    depends_on:
+      db:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      imds:
+        condition: service_started
+      keyvault:
+        condition: service_started
+
+volumes:
+  pgdata:
+  mongodata:

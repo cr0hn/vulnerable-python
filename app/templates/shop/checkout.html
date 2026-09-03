@@ -1,0 +1,36 @@
+{% extends "layouts/base.html" %}
+{% block title %}Checkout{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">Checkout</h1>
+<p class="text-white/50 mb-8">Simulated card payments. Use <code class="text-neon">{{ test_card }}</code> (Stripe-style test PAN).</p>
+<div class="grid gap-10 md:grid-cols-2">
+  <div class="space-y-3">
+    {% for row in items %}
+      <div class="flex justify-between text-sm border-b border-white/10 py-2">
+        <span>{{ row.product.name }} × {{ row.qty }}</span>
+        <span class="text-neon">${{ '%.2f'|format(row.line_cents / 100) }}</span>
+      </div>
+    {% endfor %}
+    <p class="text-right text-xl font-display text-white pt-2">Catalog total ${{ '%.2f'|format(total_cents / 100) }}</p>
+  </div>
+  <form method="post" class="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-4">
+    <label class="block text-sm">Name
+      <input name="shipping_name" value="{{ current_user.display_name }}" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    <label class="block text-sm">Shipping address
+      <textarea name="shipping_address" rows="2" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required></textarea>
+    </label>
+    <label class="block text-sm">Card number
+      <input name="card_number" placeholder="4242 4242 4242 4242" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    <label class="block text-sm">CVV
+      <input name="card_cvv" placeholder="123" maxlength="4" class="mt-1 w-full rounded-lg bg-ink border border-white/10 px-3 py-2" required />
+    </label>
+    {# VULN (A06): editable amount trusted by the server. SAFE: omit; price from server cart. #}
+    <label class="block text-sm text-white/40">Amount (cents) — lab field
+      <input name="amount_cents" value="{{ total_cents }}" class="mt-1 w-full rounded-lg bg-ink border border-magenta/40 px-3 py-2 text-magenta" />
+    </label>
+    <button class="w-full rounded-xl bg-neon py-3 font-display text-ink">Pay now</button>
+  </form>
+</div>
+{% endblock %}

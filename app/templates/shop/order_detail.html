@@ -1,0 +1,20 @@
+{% extends "layouts/base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">Order #{{ order.id }}</h1>
+<p class="text-white/50 mb-6">Status: {{ order.status }} · Owner user_id={{ order.user_id }}</p>
+<div class="rounded-2xl border border-white/10 bg-white/5 p-6 space-y-3 max-w-xl">
+  <p><span class="text-white/50">Ship to:</span> {{ order.shipping_name }}</p>
+  <p><span class="text-white/50">Address:</span> {{ order.shipping_address }}</p>
+  <p><span class="text-white/50">Card:</span> **** {{ order.card_last4 }}</p>
+  <p class="text-neon font-display text-xl">Total ${{ '%.2f'|format(order.total_cents / 100) }}</p>
+  <ul class="pt-4 border-t border-white/10 space-y-2">
+    {% for item in order.items %}
+      <li class="flex justify-between text-sm">
+        <span>{{ item.product.name }} × {{ item.quantity }}</span>
+        <span>${{ '%.2f'|format(item.unit_price_cents * item.quantity / 100) }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

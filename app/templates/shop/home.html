@@ -1,0 +1,79 @@
+{% extends "layouts/base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-violet/30 via-ink to-ink p-10 md:p-14 mb-14">
+  <div class="relative z-10 max-w-2xl">
+    <p class="text-neon text-sm font-medium tracking-widest uppercase mb-3">ByteBazaar merch</p>
+    <h1 class="font-display text-4xl md:text-5xl text-white leading-tight mb-5">Merch for people who ship.</h1>
+    <p class="text-white/75 text-lg leading-relaxed mb-8">
+      Tees, hoodies, mugs, desk toys, and stickers made for engineers, SREs, and anyone
+      who has ever celebrated a green build a little too hard. Designed in-house, printed
+      on solid blanks, and packed like we actually care about the unboxing.
+    </p>
+    <div class="flex flex-wrap gap-3">
+      <a href="#catalog" class="inline-flex rounded-xl bg-neon px-5 py-3 font-display text-ink">Shop the catalog</a>
+      <a href="#why" class="inline-flex rounded-xl border border-white/20 px-5 py-3 text-white hover:border-neon/60">Why ByteBazaar</a>
+    </div>
+  </div>
+  <div class="pointer-events-none absolute -right-8 -top-8 h-64 w-64 rounded-full bg-magenta/30 blur-3xl"></div>
+  <div class="pointer-events-none absolute right-10 bottom-0 h-40 w-40 rounded-full bg-neon/20 blur-2xl"></div>
+</section>
+
+<section class="mb-14">
+  <h2 class="font-display text-xl text-white mb-4">Shop by category</h2>
+  <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    {% for label, href, blurb in [
+      ('Apparel', '#catalog', 'Tees, hoodies, socks'),
+      ('Drinkware', url_for('shop.search', q='mug'), 'Mugs that survive standups'),
+      ('Desk', url_for('shop.search', q='duck'), 'Debugging companions'),
+      ('Stickers & prints', url_for('shop.tags', tag='sticker'), 'Laptops and walls')
+    ] %}
+      <a href="{{ href }}" class="rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-violet/70 transition">
+        <p class="font-display text-lg text-white">{{ label }}</p>
+        <p class="text-sm text-white/55 mt-1">{{ blurb }}</p>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="why" class="mb-14 grid gap-6 md:grid-cols-3">
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+    <p class="text-neon text-sm uppercase tracking-wide mb-2">Print quality</p>
+    <h3 class="font-display text-xl text-white mb-2">Built to wash</h3>
+    <p class="text-white/65 text-sm leading-relaxed">We use midweight blanks and prints that survive the laundry cycle, not just the unboxing photo.</p>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+    <p class="text-neon text-sm uppercase tracking-wide mb-2">Shipping</p>
+    <h3 class="font-display text-xl text-white mb-2">Packed with care</h3>
+    <p class="text-white/65 text-sm leading-relaxed">Orders leave our warehouse in protective mailers. Tracking goes to your account as soon as the label prints.</p>
+  </div>
+  <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
+    <p class="text-neon text-sm uppercase tracking-wide mb-2">Returns</p>
+    <h3 class="font-display text-xl text-white mb-2">30-day easy returns</h3>
+    <p class="text-white/65 text-sm leading-relaxed">Wrong size or changed your mind? Start a return from your orders page. Unused items, tags on, within 30 days.</p>
+  </div>
+</section>
+
+<section class="mb-10 flex items-end justify-between gap-4">
+  <div>
+    <h2 id="catalog" class="font-display text-3xl text-white">Catalog</h2>
+    <p class="text-white/55 mt-2">Eight staples from the current drop. More SKUs land every quarter.</p>
+  </div>
+  <a href="{{ url_for('shop.tags') }}" class="text-sm text-violet hover:text-neon hidden sm:inline">Browse by tag →</a>
+</section>
+
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  {% for p in products %}
+    {% include "components/product_card.html" %}
+  {% endfor %}
+</div>
+
+<section class="mt-16 rounded-3xl border border-white/10 bg-gradient-to-r from-white/5 to-violet/10 p-8 md:p-10">
+  <h2 class="font-display text-2xl text-white mb-3">Gift a green build</h2>
+  <p class="text-white/70 max-w-2xl leading-relaxed mb-6">
+    Not sure what to get the on-call engineer in your life? Start with the Senior Rubber Duck
+    or the sudo mug. Add a sticker pack if you want the wrapping paper to double as laptop art.
+  </p>
+  <a href="{{ url_for('shop.product_detail', slug='rubber-duck-debug') }}" class="inline-flex rounded-xl bg-violet px-5 py-3 text-white font-display">Meet the duck</a>
+</section>
+{% endblock %}

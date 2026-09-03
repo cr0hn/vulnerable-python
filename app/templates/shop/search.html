@@ -1,0 +1,29 @@
+{% extends "layouts/base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-2">Search</h1>
+<p class="text-white/50 mb-6">Query: <code class="text-neon">{{ q }}</code></p>
+{% if error %}
+  <pre class="mb-6 overflow-auto rounded-xl bg-magenta/10 border border-magenta/40 p-4 text-sm text-magenta">{{ error }}</pre>
+{% endif %}
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+  {% for p in products %}
+    {% if p.slug is defined %}
+      {% set p = p %}
+    {% endif %}
+    <a href="{{ url_for('shop.product_detail', slug=p.slug if p.slug is defined else p['slug']) }}"
+       class="group rounded-2xl border border-white/10 bg-white/5 overflow-hidden hover:border-violet/60 transition">
+      <div class="aspect-square bg-white overflow-hidden">
+        <img src="{{ url_for('static', filename='products/' + (p.image if p.image is defined else p['image'])) }}"
+             alt="" class="h-full w-full object-cover" />
+      </div>
+      <div class="p-4">
+        <h3 class="font-display text-lg text-white">{{ p.name if p.name is defined else p['name'] }}</h3>
+        <p class="mt-2 text-neon">${{ '%.2f'|format((p.price_cents if p.price_cents is defined else p['price_cents']) / 100) }}</p>
+      </div>
+    </a>
+  {% else %}
+    <p class="text-white/50 col-span-full">No products matched.</p>
+  {% endfor %}
+</div>
+{% endblock %}

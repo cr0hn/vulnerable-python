@@ -1,0 +1,28 @@
+{% extends "layouts/base.html" %}
+{% block title %}Cart{% endblock %}
+{% block content %}
+<h1 class="font-display text-3xl text-white mb-6">Cart</h1>
+{% if not items %}
+  <p class="text-white/60">Empty. <a class="text-neon underline" href="{{ url_for('shop.home') }}">Browse merch</a>.</p>
+{% else %}
+  <div class="space-y-3 mb-8">
+    {% for row in items %}
+      <div class="flex items-center gap-4 rounded-xl border border-white/10 bg-white/5 p-4">
+        <img src="{{ url_for('static', filename='products/' + row.product.image) }}" class="h-16 w-16 rounded-lg object-cover bg-white" alt="" />
+        <div class="flex-1">
+          <p class="font-display text-white">{{ row.product.name }}</p>
+          <p class="text-sm text-white/50">× {{ row.qty }}</p>
+        </div>
+        <p class="text-neon">${{ '%.2f'|format(row.line_cents / 100) }}</p>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="flex items-center justify-between max-w-xl">
+    <p class="text-xl text-white">Total <span class="text-neon font-display">${{ '%.2f'|format(total_cents / 100) }}</span></p>
+    <div class="flex gap-3">
+      <form method="post" action="{{ url_for('shop.cart_clear') }}"><button class="text-white/50 hover:text-white">Clear</button></form>
+      <a href="{{ url_for('orders.checkout') }}" class="rounded-xl bg-neon px-5 py-2 font-display text-ink">Checkout</a>
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

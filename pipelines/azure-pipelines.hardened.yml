@@ -1,0 +1,65 @@
+# pipelines/azure-pipelines.hardened.yml
+# Safer shape against Poisoned Pipeline Execution (PPE).
+# Still a lab sample, not a full production blueprint.
+#
+# Improvements vs root azure-pipelines.yml:
+# - extends a template from a protected repo/branch the PR cannot edit
+# - secret variable group only on non-PR (main) builds
+# - no persistCredentials on PR checkout
+# - deploy gated by environment; build job has no production service connection
+#
+# In Azure DevOps you would point a second pipeline at this path, or replace
+# the root azure-pipelines.yml once the locked template repo exists.
+
+trigger:
+  - main
+
+pr:
+  - main
+
+resources:
+  repositories:
+    - repository: ciTemplates
+      type: git
+      name: platform/ci-templates   # protected repo; app PRs cannot change it
+      ref: refs/heads/main
+
+extends:
+  template: bytebazaar/build.yml@ciTemplates
+  parameters:
+    imageName: bytebazaar-web
+    dockerfile: app/Dockerfile
+    # Template owns steps; this file only passes parameters.
+
+# --- Illustrative expanded form (what the locked template might enforce) ---
+# stages:
+# - stage: Build
+#   jobs:
+#   - job: build
+#     steps:
+#     - checkout: self
+#       persistCredentials: false
+#     - script: docker build -t ${{ parameters.imageName }}:$(Build.BuildId) ...
+#       displayName: Build (no secrets on PR)
+#     - ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
+#       - script: echo "PR build: skip login/push/secrets"
+#     - ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
+#       - task: Docker@2
+#         inputs:
+#           command: push
+#           containerRegistry: lab-acr-connection-push-only
+# - stage: Deploy
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+#   jobs:
+#   - deployment: prod
+#     environment: bytebazaar-prod
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - template: deploy-k8s.yml@ciTemplates
+
+variables:
+  - name: IMAGE_NAME
+    value: bytebazaar-web
+  # Secrets intentionally NOT referenced for PR builds.
