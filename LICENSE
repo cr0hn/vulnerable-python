@@ -19,3 +19,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+-----------------------------------------------------------------------------
+
+About the copyright holder
+
+Daniel García (cr0hn) is a cybersecurity researcher, developer, and trainer with
+more than twenty years in the field. He started in ethical hacking (including
+Telefónica R&D), later led API security work at 42Crunch, and focuses on
+critical security, REST APIs, and systems that have to hold up under real load.
+
+He has published 100+ open source security tools. Several shipped in Kali Linux
+and BlackArch (among them Dockerscan, FestIn, Enteletaor, and Dockerfile
+Security). He speaks at conferences, founded the Navaja Negra security
+conference, and helped start the OWASP Madrid chapter. He also designs and
+delivers hands-on secure-development workshops for engineering teams.
+
+ByteBazaar (dvwa-python) is part of that teaching line: a real Flask shop with
+real bugs, released under MIT so developers can break it safely on their laptop.
+
+- Website: https://cr0hn.com
+- GitHub:  https://github.com/cr0hn
+- Talks:   https://cr0hn.com/en/talks/
+- Tools:   https://cr0hn.com/en/projects/
+- Authors: see AUTHORS.md in this repository
