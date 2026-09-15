@@ -6,6 +6,11 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Use the interpreter already in this image; a uv-managed one (downloaded or
+# discovered from a build-time host cache) can get symlinked to a path that
+# will not exist at container runtime.
+ENV UV_PYTHON_PREFERENCE=only-system
+
 COPY pyproject.toml uv.lock .
 RUN uv sync --locked --no-install-project
 
