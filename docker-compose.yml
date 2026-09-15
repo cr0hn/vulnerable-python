@@ -22,6 +22,9 @@ services:
     image: mongo:7
     # --quiet kills the endless info/debug chatter in compose logs
     command: ["--quiet", "--bind_ip_all"]
+    # attach: false hides remaining "client metadata" noise from `docker compose up`
+    # (mongosh handshake logs bypass --quiet); logs still work via `docker compose logs mongo`
+    attach: false
     volumes:
       - mongodata:/data/db
     healthcheck:
