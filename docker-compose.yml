@@ -1,5 +1,6 @@
 # ByteBazaar / vulnerable-python — local vulnerable geek shop
-# Usage: docker compose up --build
+# Usage: docker compose up --build   (build web locally)
+#     or: docker compose up --pull always   (use the published ghcr.io image)
 # App: http://localhost:8888
 # (8888 on purpose: Caido and many tools already claim 8080)
 
@@ -44,6 +45,7 @@ services:
     build: ./mocks/keyvault
 
   web:
+    image: ghcr.io/cr0hn/vulnerable-python:latest
     build: ./app
     ports:
       # Override with APP_PORT=9999 if 8888 is taken.

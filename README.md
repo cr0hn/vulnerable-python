@@ -40,6 +40,12 @@ You can learn from the UI, from [`docs/labs/`](docs/labs/), or by reading the co
 docker compose up --build
 ```
 
+Or skip the local build and pull the published multi-arch image (`linux/amd64` + `linux/arm64`, so it works the same on Intel/AMD, Apple Silicon, and Windows via Docker Desktop):
+
+```bash
+docker compose up --pull always
+```
+
 Open **http://localhost:8888**
 
 Default host port is `8888` so it does not fight proxies on `8080` (Caido and friends). Override with `APP_PORT=9999` if needed.
@@ -98,6 +104,17 @@ order = g.db.get(Order, order_id)
 - Tailwind via CDN
 - Docker Compose
 - Local Azure IMDS + Key Vault mocks for SSRF
+
+## Docker image
+
+The `web` image is built and published automatically by [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml) on every push to `app/**`, for `linux/amd64` and `linux/arm64`:
+
+```
+ghcr.io/cr0hn/vulnerable-python:latest
+ghcr.io/cr0hn/vulnerable-python:<short-sha>
+```
+
+`docker-compose.yml` points `web` at this image by default; `docker compose build` still builds it locally instead.
 
 ## Azure Pipelines
 
