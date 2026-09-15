@@ -219,13 +219,73 @@ def seed_postgres(session):
         )
     )
 
+    admin_order = Order(
+        user_id=admin.id,
+        total_cents=products[6].price_cents + products[7].price_cents,
+        status="shipped",
+        shipping_name="Store Admin",
+        shipping_address="1 HQ Way, Build City",
+        card_last4="4242",
+        card_pan_lab_only="4242424242424242",
+    )
+    session.add(admin_order)
+    session.flush()
+    session.add_all(
+        [
+            OrderItem(
+                order_id=admin_order.id,
+                product_id=products[6].id,
+                quantity=1,
+                unit_price_cents=products[6].price_cents,
+            ),
+            OrderItem(
+                order_id=admin_order.id,
+                product_id=products[7].id,
+                quantity=2,
+                unit_price_cents=products[7].price_cents,
+            ),
+        ]
+    )
+
+    bob_order_2 = Order(
+        user_id=bob.id,
+        total_cents=products[4].price_cents,
+        status="pending",
+        shipping_name="Bob Builder",
+        shipping_address="42 Pipeline Road, Build City",
+    )
+    session.add(bob_order_2)
+    session.flush()
     session.add(
-        Review(
-            product_id=products[0].id,
-            user_id=bob.id,
-            rating=5,
-            body="Fits great. Soft cotton, print survived two washes so far. Wore it to a postmortem and nobody noticed the irony.",
+        OrderItem(
+            order_id=bob_order_2.id,
+            product_id=products[4].id,
+            quantity=1,
+            unit_price_cents=products[4].price_cents,
         )
+    )
+
+    session.add_all(
+        [
+            Review(
+                product_id=products[0].id,
+                user_id=bob.id,
+                rating=5,
+                body="Fits great. Soft cotton, print survived two washes so far. Wore it to a postmortem and nobody noticed the irony.",
+            ),
+            Review(
+                product_id=products[3].id,
+                user_id=alice.id,
+                rating=4,
+                body="Solid debugging partner. Deadpan expression really sells it.",
+            ),
+            Review(
+                product_id=products[2].id,
+                user_id=admin.id,
+                rating=5,
+                body="Hood is deep enough to hide from product. 10/10.",
+            ),
+        ]
     )
     session.commit()
     print(f"Seeded Postgres: users alice/bob/admin, {len(products)} products, sample orders.")
