@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2026 Daniel García (cr0hn)
+Copyright (c) 2026 Daniel Alfocea (cr0hn)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ SOFTWARE.
 
 About the copyright holder
 
-Daniel García (cr0hn) is a cybersecurity researcher, developer, and trainer with
+Daniel Alfocea (cr0hn) is a cybersecurity researcher, developer, and trainer with
 more than twenty years in the field. He started in ethical hacking (including
 Telefónica R&D), later led API security work at 42Crunch, and focuses on
 critical security, REST APIs, and systems that have to hold up under real load.
@@ -38,8 +38,8 @@ delivers hands-on secure-development workshops for engineering teams.
 ByteBazaar (vulnerable-python) is part of that teaching line: a real Flask shop with
 real bugs, released under MIT so developers can break it safely on their laptop.
 
-- Website: https://cr0hn.com
+- Website: https://danielalfocea.com
 - GitHub:  https://github.com/cr0hn
-- Talks:   https://cr0hn.com/en/talks/
-- Tools:   https://cr0hn.com/en/projects/
+- Talks:   https://danielalfocea.com/en/talks/
+- Tools:   https://danielalfocea.com/en/projects/
 - Authors: see AUTHORS.md in this repository

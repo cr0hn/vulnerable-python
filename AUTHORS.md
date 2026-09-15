@@ -1,11 +1,11 @@
 # Authors
 
-## Daniel García (cr0hn)
+## Daniel Alfocea (cr0hn)
 
 Copyright holder of ByteBazaar / vulnerable-python. The MIT terms and a short bio also
 appear in [LICENSE](LICENSE).
 
-**Daniel García**, known in security as **cr0hn**, has worked in cybersecurity
+**Daniel Alfocea**, known in security as **cr0hn**, has worked in cybersecurity
 and software development for over twenty years. He began on Telefónica R&D's
 ethical hacking team, later led API security research and product work at
 42Crunch, and specializes in critical security, REST APIs, and high-scale
@@ -24,10 +24,10 @@ ByteBazaar is the open lab behind that approach.
 
 | | |
 |---|---|
-| Site | https://cr0hn.com |
+| Site | https://danielalfocea.com |
 | GitHub | https://github.com/cr0hn |
-| Talks | https://cr0hn.com/en/talks/ |
-| Open source tools | https://cr0hn.com/en/projects/ |
+| Talks | https://danielalfocea.com/en/talks/ |
+| Open source tools | https://danielalfocea.com/en/projects/ |
 
 Contributions and forks should keep the copyright notice and license text as
 required by MIT.

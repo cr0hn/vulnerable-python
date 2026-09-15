@@ -7,7 +7,7 @@
 
 <p align="center">
   Inspired by <a href="https://github.com/digininja/DVWA">DVWA</a>
-  · Author <a href="https://github.com/cr0hn">Daniel García (cr0hn)</a>
+  · Author <a href="https://github.com/cr0hn">Daniel Alfocea (cr0hn)</a>
   · <a href="LICENSE">MIT</a>
 </p>
 
@@ -126,7 +126,7 @@ docker-compose.yml
 
 ## Author
 
-Main author: [Daniel García (cr0hn)](https://github.com/cr0hn). More at [cr0hn.com](https://cr0hn.com).
+Main author: [Daniel Alfocea (cr0hn)](https://github.com/cr0hn). More at [danielalfocea.com](https://danielalfocea.com).
 
 ## License
 
