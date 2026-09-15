@@ -123,6 +123,31 @@ PRODUCTS = [
 ]
 
 
+def _make_order(session, user, items, status, shipping_name, shipping_address, paid=True):
+    """items: list of (product, quantity)."""
+    order = Order(
+        user_id=user.id,
+        total_cents=sum(p.price_cents * qty for p, qty in items),
+        status=status,
+        shipping_name=shipping_name,
+        shipping_address=shipping_address,
+        card_last4="4242" if paid else "",
+        card_pan_lab_only="4242424242424242" if paid else "",
+    )
+    session.add(order)
+    session.flush()
+    session.add_all(
+        OrderItem(
+            order_id=order.id,
+            product_id=p.id,
+            quantity=qty,
+            unit_price_cents=p.price_cents,
+        )
+        for p, qty in items
+    )
+    return order
+
+
 def seed_postgres(session):
     # Always refresh catalog copy/images so local updates land without wiping volumes.
     by_slug = {
@@ -171,98 +196,38 @@ def seed_postgres(session):
 
     products = session.scalars(select(Product).order_by(Product.id)).all()
 
-    bob_order = Order(
-        user_id=bob.id,
-        total_cents=products[0].price_cents + products[1].price_cents,
-        status="paid",
-        shipping_name="Bob Builder",
-        shipping_address="42 Pipeline Road, Build City",
-        card_last4="4242",
-        card_pan_lab_only="4242424242424242",
+    # id 1: kept first/paid on purpose - docs/labs/01 and 08 reference Bob's order as "usually id 1".
+    _make_order(
+        session, bob, [(products[0], 1), (products[1], 1)],
+        "paid", "Bob Builder", "42 Pipeline Road, Build City",
     )
-    session.add(bob_order)
-    session.flush()
-    session.add_all(
-        [
-            OrderItem(
-                order_id=bob_order.id,
-                product_id=products[0].id,
-                quantity=1,
-                unit_price_cents=products[0].price_cents,
-            ),
-            OrderItem(
-                order_id=bob_order.id,
-                product_id=products[1].id,
-                quantity=1,
-                unit_price_cents=products[1].price_cents,
-            ),
-        ]
+    _make_order(
+        session, alice, [(products[3], 1)],
+        "paid", "Alice", "1 Curious Lane",
     )
-
-    alice_order = Order(
-        user_id=alice.id,
-        total_cents=products[3].price_cents,
-        status="paid",
-        shipping_name="Alice",
-        shipping_address="1 Curious Lane",
-        card_last4="4242",
-        card_pan_lab_only="4242424242424242",
+    _make_order(
+        session, admin, [(products[6], 1), (products[7], 2)],
+        "shipped", "Store Admin", "1 HQ Way, Build City",
     )
-    session.add(alice_order)
-    session.flush()
-    session.add(
-        OrderItem(
-            order_id=alice_order.id,
-            product_id=products[3].id,
-            quantity=1,
-            unit_price_cents=products[3].price_cents,
-        )
+    _make_order(
+        session, bob, [(products[4], 1)],
+        "pending", "Bob Builder", "42 Pipeline Road, Build City", paid=False,
     )
-
-    admin_order = Order(
-        user_id=admin.id,
-        total_cents=products[6].price_cents + products[7].price_cents,
-        status="shipped",
-        shipping_name="Store Admin",
-        shipping_address="1 HQ Way, Build City",
-        card_last4="4242",
-        card_pan_lab_only="4242424242424242",
+    _make_order(
+        session, alice, [(products[5], 2), (products[2], 1)],
+        "paid", "Alice", "1 Curious Lane",
     )
-    session.add(admin_order)
-    session.flush()
-    session.add_all(
-        [
-            OrderItem(
-                order_id=admin_order.id,
-                product_id=products[6].id,
-                quantity=1,
-                unit_price_cents=products[6].price_cents,
-            ),
-            OrderItem(
-                order_id=admin_order.id,
-                product_id=products[7].id,
-                quantity=2,
-                unit_price_cents=products[7].price_cents,
-            ),
-        ]
+    _make_order(
+        session, bob, [(products[0], 1), (products[7], 1)],
+        "paid", "Bob Builder", "42 Pipeline Road, Build City",
     )
-
-    bob_order_2 = Order(
-        user_id=bob.id,
-        total_cents=products[4].price_cents,
-        status="pending",
-        shipping_name="Bob Builder",
-        shipping_address="42 Pipeline Road, Build City",
+    _make_order(
+        session, admin, [(products[1], 1), (products[4], 3)],
+        "shipped", "Store Admin", "1 HQ Way, Build City",
     )
-    session.add(bob_order_2)
-    session.flush()
-    session.add(
-        OrderItem(
-            order_id=bob_order_2.id,
-            product_id=products[4].id,
-            quantity=1,
-            unit_price_cents=products[4].price_cents,
-        )
+    _make_order(
+        session, alice, [(products[6], 1)],
+        "cancelled", "Alice", "1 Curious Lane", paid=False,
     )
 
     session.add_all(
