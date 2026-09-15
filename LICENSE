@@ -35,7 +35,7 @@ Security). He speaks at conferences, founded the Navaja Negra security
 conference, and helped start the OWASP Madrid chapter. He also designs and
 delivers hands-on secure-development workshops for engineering teams.
 
-ByteBazaar (dvwa-python) is part of that teaching line: a real Flask shop with
+ByteBazaar (vulnerable-python) is part of that teaching line: a real Flask shop with
 real bugs, released under MIT so developers can break it safely on their laptop.
 
 - Website: https://cr0hn.com

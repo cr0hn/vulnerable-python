@@ -8,7 +8,7 @@ An early commit added a fake `.env` with `AZURE_DEVOPS_PAT`. A later commit dele
 
 ## Exploit
 
-From the repo root (`dvwa-python`):
+From the repo root (`vulnerable-python`):
 
 ```bash
 git log -p --all -S 'AZURE_DEVOPS_PAT' -- .env

@@ -2,7 +2,7 @@
 
 ## Daniel García (cr0hn)
 
-Copyright holder of ByteBazaar / dvwa-python. The MIT terms and a short bio also
+Copyright holder of ByteBazaar / vulnerable-python. The MIT terms and a short bio also
 appear in [LICENSE](LICENSE).
 
 **Daniel García**, known in security as **cr0hn**, has worked in cybersecurity

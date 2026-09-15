@@ -1,4 +1,4 @@
-# ByteBazaar / dvwa-python — local vulnerable geek shop
+# ByteBazaar / vulnerable-python — local vulnerable geek shop
 # Usage: docker compose up --build
 # App: http://localhost:8888
 # (8888 on purpose: Caido and many tools already claim 8080)

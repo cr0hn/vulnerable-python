@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.1] - 2026-09-15
+
+### Changed
+
+- Repository renamed to `vulnerable-python`.
+
 ## [0.1.0] - 2026-09-03
 
 ### Added
