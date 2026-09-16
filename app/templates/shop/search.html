@@ -2,7 +2,10 @@
 {% block title %}Search{% endblock %}
 {% block content %}
 <h1 class="font-display text-3xl text-white mb-2">Search</h1>
-<p class="text-white/50 mb-6">Query: <code class="text-neon">{{ q }}</code></p>
+{# VULN (A05 Reflected XSS): q is echoed with |safe, disabling Jinja auto-escaping.
+   Try: /search?q=<script>alert('xss')</script>
+   SAFE: drop the |safe filter, let Jinja auto-escape q like any other value. #}
+<p class="text-white/50 mb-6">Query: <code class="text-neon">{{ q | safe }}</code></p>
 {% if error %}
   <pre class="mb-6 overflow-auto rounded-xl bg-magenta/10 border border-magenta/40 p-4 text-sm text-magenta">{{ error }}</pre>
 {% endif %}
